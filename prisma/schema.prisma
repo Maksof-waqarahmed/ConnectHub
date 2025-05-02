@@ -8,46 +8,85 @@ generator client {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  password      String?
-  accounts      Account[]
-  sessions      Session[]
+  id                    String                 @id @default(cuid())
+  name                  String?
+  email                 String?                @unique
+  image                 String?
+  isBlocked             Boolean                @default(false) @map("is_blocked")
+  password              String?
+  dateOfBirth           DateTime?              @map("date_of_birth")
+  phoneNumber           String?                @map("phone_number")
+  emailVerified         DateTime?
+  // emailToken            String?                @map("email_token")
+  createdAt             DateTime               @default(now()) @map(name: "created_at")
+  updatedAt             DateTime               @updatedAt() @map(name: "updated_at")
+  isTwoFactorEnabled    Boolean                @default(false)
+  TwoFactorConfirmation TwoFactorConfirmation?
+  accounts              Account[]
+  Session               Session[]
 }
 
 model Account {
-  id                String  @id @default(uuid())
-  userId            String
+  id                String  @id() @default(cuid())
+  userId            String  @map("user_id")
   type              String
   provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text()
+  access_token      String? @db.Text()
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String?
+  id_token          String? @db.Text()
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@map("accounts")
 }
 
 model Session {
   id           String   @id @default(uuid())
-  sessionToken String   @unique
-  userId       String
+  createdAt    DateTime @default(now()) @map(name: "created_at")
+  updatedAt    DateTime @updatedAt() @map(name: "updated_at")
+  sessionToken String   @unique() @map("session_token")
   expires      DateTime
+  userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
 }
 
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
+// model VerificationToken {
+//   identifier String
+//   token      String   @unique()
+//   expires    DateTime
 
-  @@unique([identifier, token])
+//   @@unique([identifier, token])
+//   @@map("verification_token")
+// }
+
+model ResetPasswordToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model TwoFactorToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model TwoFactorConfirmation {
+  id      String   @id @default(cuid())
+  userId  String   @unique
+  expires DateTime
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

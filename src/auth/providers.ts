@@ -16,8 +16,17 @@ export const CredentialsProvider = Credentials({
         const { email, password } = validFields.data;
         const user = await getUserByEmail(email);
         if (!user) return null;
-        const isPasswordMatch = await bcrypt.compare(password, user.password!);
-        if (isPasswordMatch) return user;
+        const isPasswordMatch = await bcrypt.compare(password, user.password! || '');
+        if (!isPasswordMatch) return null;
+
+        return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            isTwoFactorEnabled: user.isTwoFactorEnabled,
+            isOAuth: false,
+            avatar: user.image || null,
+        }
     }
 })
 export const GithubProvider = Github({
@@ -26,8 +35,8 @@ export const GithubProvider = Github({
 });
 
 export const GoogleProvider = Google({
-    clientId: process.env.GOOGLE_ID as string,
-    clientSecret: process.env.GOOGLE_SECRET as string,
+    clientId: process.env.GOOGLE_CLIENT_ID as string,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     authorization: {
         params: {
             prompt: "consent",
