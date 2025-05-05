@@ -1,30 +1,101 @@
-import { GalleryVerticalEnd } from "lucide-react"
-import { LoginForm } from "./_components/login-form"
+import { LoginForm } from "@/components/auth/login-form"
+import { ArrowLeft } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
 
 export default function LoginPage() {
   return (
-    <div className="grid min-h-svh lg:grid-cols-2">
-      <div className="flex flex-col gap-4 p-6 md:p-10">
-        <div className="flex justify-center gap-2 md:justify-start">
-          <a href="#" className="flex items-center gap-2 font-medium">
-            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <GalleryVerticalEnd className="size-4" />
+    <div className="flex flex-col lg:flex-row min-h-svh w-full bg-gradient-to-br from-[#8E51FF] to-[#6930c3]">
+      {/* Left side - Illustration/Branding */}
+      <div className="lg:w-1/2 p-6 lg:p-12 flex flex-col justify-center items-center text-white">
+        <div className="max-w-md mx-auto">
+          <div className="mb-8">
+            <Link href="/auth/register" className="inline-flex items-center text-white hover:text-white/80 transition-colors">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Register Page
+            </Link>
+          </div>
+
+          <div className="text-center lg:text-left mb-8">
+            <h1 className="text-3xl lg:text-4xl font-bold mb-4">Welcome Back</h1>
+            <p className="text-white/80 text-lg">
+              Discover the power of real connections. At ConnectHub, we believe in meaningful conversations, real-time
+              sharing, and building a space where everyone belongs.
+            </p>
+          </div>
+
+          <div className="hidden lg:block relative h-80 w-full">
+            <Image
+              src="/placeholder.svg?height=400&width=400"
+              alt="ConnectHub Illustration"
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
+
+          <div className="hidden lg:flex mt-8 items-center gap-4">
+            <div className="flex items-center -space-x-2">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="h-10 w-10 rounded-full bg-white/20 border-2 border-white flex items-center justify-center overflow-hidden"
+                >
+                  <Image
+                    src={`/placeholder.svg?height=40&width=40&text=User${i}`}
+                    alt={`User ${i}`}
+                    width={40}
+                    height={40}
+                  />
+                </div>
+              ))}
             </div>
-            Acme Inc.
-          </a>
-        </div>
-        <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
-            <LoginForm />
+            <p className="text-sm">Join thousands of users already on ConnectHub</p>
           </div>
         </div>
       </div>
-      <div className="relative hidden bg-muted lg:block">
-        <img
-          src="/placeholder.svg"
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-        />
+
+      {/* Right side - Form */}
+      <div className="lg:w-1/2 bg-white rounded-t-3xl lg:rounded-none p-6 lg:p-0 flex items-center justify-center">
+        <div className="w-full max-w-md p-4 lg:p-12">
+          <div className="flex justify-center lg:justify-start mb-6">
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[#8E51FF] text-white">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="size-5"
+                >
+                  <path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z" />
+                </svg>
+              </div>
+              <span className="font-semibold text-lg">ConnectHub</span>
+            </div>
+          </div>
+
+          <LoginForm />
+
+          <div className="lg:hidden mt-8 text-center text-sm text-gray-500">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <div className="flex -space-x-2">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="h-8 w-8 rounded-full bg-purple-100 border border-purple-200 flex items-center justify-center text-xs text-purple-700"
+                  >
+                    {i}
+                  </div>
+                ))}
+              </div>
+              <p>Join thousands of users</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )
