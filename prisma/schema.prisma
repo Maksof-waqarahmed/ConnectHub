@@ -17,11 +17,10 @@ model User {
   dateOfBirth           DateTime?              @map("date_of_birth")
   phoneNumber           String?                @map("phone_number")
   emailVerified         DateTime?
-  // emailToken            String?                @map("email_token")
+  emailToken            String?                @map("email_token")
   createdAt             DateTime               @default(now()) @map(name: "created_at")
   updatedAt             DateTime               @updatedAt() @map(name: "updated_at")
   isTwoFactorEnabled    Boolean                @default(false)
-  TwoFactorConfirmation TwoFactorConfirmation?
   accounts              Account[]
   Session               Session[]
 }
@@ -55,38 +54,4 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("session")
-}
-
-// model VerificationToken {
-//   identifier String
-//   token      String   @unique()
-//   expires    DateTime
-
-//   @@unique([identifier, token])
-//   @@map("verification_token")
-// }
-
-model ResetPasswordToken {
-  id      String   @id @default(cuid())
-  email   String
-  token   String   @unique
-  expires DateTime
-
-  @@unique([email, token])
-}
-
-model TwoFactorToken {
-  id      String   @id @default(cuid())
-  email   String
-  token   String   @unique
-  expires DateTime
-
-  @@unique([email, token])
-}
-
-model TwoFactorConfirmation {
-  id      String   @id @default(cuid())
-  userId  String   @unique
-  expires DateTime
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

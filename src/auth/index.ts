@@ -3,7 +3,6 @@ import { authConfig } from "@/auth/config";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import prisma from "@/lib/db";
 import { getUserById, updateUserById } from "@/services/user";
-import { getTwoFactorConfirmationByUserId } from "@/services/two-factor-confirmation";
 import { isExpired } from "@/lib/utils";
 import { getAccountByUserId } from "@/services/account";
 
@@ -57,14 +56,6 @@ export const {
             const existingUser = await getUserById(user.id as string);
             console.log("existingUser", existingUser)
             if (!existingUser?.emailVerified) return false;
-            if (existingUser.isTwoFactorEnabled) {
-                const existingTwoFactorConfirmation = await getTwoFactorConfirmationByUserId(
-                    existingUser.id
-                );
-                if (!existingTwoFactorConfirmation) return false;
-                const hasExpired = isExpired(existingTwoFactorConfirmation.expires);
-                if (hasExpired) return false;
-            }
             return true;
         },
     },
