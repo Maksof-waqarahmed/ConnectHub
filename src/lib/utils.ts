@@ -12,6 +12,10 @@ export async function hashPassword(password: string) {
   return await bcrypt.hash(password, await bcrypt.genSalt());
 }
 
+export async function comparePassword(password: string, hash: string) {
+  return await bcrypt.compare(password, hash);
+}
+
 /**
  * Function to check whether the given value is expired or not.
  * @param expires The date that want to check

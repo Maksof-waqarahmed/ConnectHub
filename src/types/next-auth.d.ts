@@ -1,8 +1,10 @@
 import { DefaultSession } from "next-auth";
 
 export type ExtendedUser = DefaultSession["user"] & {
-    isTwoFactorEnabled: boolean;
     isOAuth: boolean;
+    dateOfBirth?: Date | null;
+    emailVerified?: Date | null;
+    number?: string | null;
 };
 
 declare module "next-auth" {

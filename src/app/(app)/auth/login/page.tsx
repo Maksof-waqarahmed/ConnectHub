@@ -26,10 +26,10 @@ export default function LoginPage() {
 
           <div className="hidden lg:block relative h-80 w-full">
             <Image
-              src="/placeholder.svg?height=400&width=400"
+              src="/illustration-login.png"
               alt="ConnectHub Illustration"
               fill
-              className="object-contain"
+              className="object-contain rounded-tr-full rounded-bl-full"
               priority
             />
           </div>
@@ -42,7 +42,7 @@ export default function LoginPage() {
                   className="h-10 w-10 rounded-full bg-white/20 border-2 border-white flex items-center justify-center overflow-hidden"
                 >
                   <Image
-                    src={`/placeholder.svg?height=40&width=40&text=User${i}`}
+                    src={""}
                     alt={`User ${i}`}
                     width={40}
                     height={40}

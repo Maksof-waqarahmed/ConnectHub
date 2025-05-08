@@ -4,6 +4,7 @@ import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import Credentials from "next-auth/providers/credentials";
 import { getUserByEmail } from "@/services/user";
+import { response } from "@/lib/utils";
 
 
 export const CredentialsProvider = Credentials({
@@ -14,18 +15,30 @@ export const CredentialsProvider = Credentials({
             return null;
         }
         const { email, password } = validFields.data;
+        console.log("Email", email, password);
         const user = await getUserByEmail(email);
         if (!user) return null;
+
         const isPasswordMatch = await bcrypt.compare(password, user.password! || '');
         if (!isPasswordMatch) return null;
+
+        // const isPasswordMatch = await bcrypt.compare(password, user.password! || '');
+        // if (!isPasswordMatch) {
+        //     return response({
+        //         success: false,
+        //         error: {
+        //             code: 401,
+        //             message: "Invalid credentials.",
+        //         },
+        //     });
+        // }
 
         return {
             id: user.id,
             name: user.name,
             email: user.email,
-            isTwoFactorEnabled: user.isTwoFactorEnabled,
+            image: user.image || null,
             isOAuth: false,
-            avatar: user.image || null,
         }
     }
 })

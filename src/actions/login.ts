@@ -1,6 +1,7 @@
-"use server";
+'use client'
 
-import { signIn } from "@/auth";
+// import { signIn } from "@/auth";
+import { signIn } from "next-auth/react";
 import { Login_Schema } from "@/schemas";
 import { z } from "zod";
 import { AuthError } from "next-auth";
@@ -10,6 +11,8 @@ import { response } from "@/lib/utils";
 
 export const login = async (payload: z.infer<typeof Login_Schema>) => {
     const validatedFields = Login_Schema.safeParse(payload);
+    console.log("validatedFields", validatedFields)
+
     if (!validatedFields.success) {
         return response({
             success: false,
@@ -24,36 +27,38 @@ export const login = async (payload: z.infer<typeof Login_Schema>) => {
     console.log(`Login attempt for email: ${email}`);
 
     const existingUser = await getUserByEmail(email);
-    if (!existingUser || !existingUser.email || !existingUser.password) {
-        return response({
-            success: false,
-            error: {
-                code: 401,
-                message: "Invalid credentials.",
-            },
-        });
-    }
+    console.log("existingUser", existingUser)
 
-    const isPasswordMatch = await bcrypt.compare(password, existingUser.password);
-    if (!isPasswordMatch) {
-        return response({
-            success: false,
-            error: {
-                code: 401,
-                message: "Invalid credentials.",
-            },
-        });
-    }
+    // if (!existingUser || !existingUser.email || !existingUser.password) {
+    //     return response({
+    //         success: false,
+    //         error: {
+    //             code: 401,
+    //             message: "Invalid credentials.",
+    //         },
+    //     });
+    // }
 
-    if (!existingUser.emailVerified) {
-        return response({
-            success: false,
-            error: {
-                code: 401,
-                message: "Your email address is not verified yet. Please check your email.",
-            },
-        });
-    }
+    // const isPasswordMatch = await bcrypt.compare(password, existingUser.password);
+    // if (!isPasswordMatch) {
+    //     return response({
+    //         success: false,
+    //         error: {
+    //             code: 401,
+    //             message: "Invalid credentials.",
+    //         },
+    //     });
+    // }
+
+    // if (!existingUser.emailVerified) {
+    //     return response({
+    //         success: false,
+    //         error: {
+    //             code: 401,
+    //             message: "Your email address is not verified yet. Please check your email.",
+    //         },
+    //     });
+    // }
 
     return await signInCredentials(email, password);
 };

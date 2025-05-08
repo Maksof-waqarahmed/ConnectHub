@@ -3,7 +3,6 @@ import type React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
@@ -31,10 +30,11 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
         setIsLoading(true);
         setError(null);
         try {
-            const res = await login(values);
-            if (!res.success) {
-                setError(res.error.message);
-            }
+            const response = await signIn("credentials", {
+                ...values,
+                // callbackUrl: "/dashboard"
+            });
+            console.log(response)
         } catch (err) {
             setError("An unexpected error occurred.");
         } finally {
@@ -43,7 +43,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
         }
     }
 
-    async function handleOAuth(provider: string) {
+    async function handleOAuth(provider: string): Promise<void> {
         setIsLoading(true);
         setError(null);
         try {
