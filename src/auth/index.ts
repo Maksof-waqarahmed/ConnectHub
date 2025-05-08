@@ -3,7 +3,6 @@ import { authConfig } from "@/auth/config";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import prisma from "@/lib/db";
 import { getUserById, updateUserById } from "@/services/user";
-import { isExpired } from "@/lib/utils";
 import { getAccountByUserId } from "@/services/account";
 
 export const {
@@ -11,17 +10,12 @@ export const {
     auth,
     signIn,
     signOut,
-    // update
 } = NextAuth({
     adapter: PrismaAdapter(prisma),
     session: {
         strategy: "jwt",
         maxAge: 60 * 60 * 24, // 1 Day
     },
-    // pages: {
-    //     signIn: "/login",
-    //     error: "/error",
-    // },
     events: {
         async linkAccount({ user }) {
             await updateUserById(user.id as string, { emailVerified: new Date() });
@@ -57,13 +51,15 @@ export const {
             }
             return session;
         },
-        // async signIn({ user, account }) {
-        //     if (account?.provider !== "credentials") return true;
-        //     const existingUser = await getUserById(user.id as string);
-        //     console.log("existingUser", existingUser)
-        //     if (!existingUser?.emailVerified) return false;
-        //     return true;
-        // },
+        async signIn({ user, account }) {
+            if (account?.provider === "credentials") {
+                const existingUser = await getUserById(user.id as string);
+                if (!existingUser?.emailVerified) {
+                    throw new Error("Please verify your email before logging in");
+                }
+            }
+            return true;
+        },
     },
     ...authConfig,
 });

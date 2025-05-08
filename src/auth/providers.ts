@@ -4,33 +4,29 @@ import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import Credentials from "next-auth/providers/credentials";
 import { getUserByEmail } from "@/services/user";
-import { response } from "@/lib/utils";
-
 
 export const CredentialsProvider = Credentials({
     async authorize(credentials) {
         const validFields = await Login_Schema.safeParseAsync(credentials);
 
         if (!validFields.success) {
-            return null;
+            throw new Error("Invalid input data");
         }
+
         const { email, password } = validFields.data;
-        console.log("Email", email, password);
+
         const user = await getUserByEmail(email);
-        if (!user) return null;
+        if (!user) {
+            throw new Error("User not found");
+        }
 
-        const isPasswordMatch = await bcrypt.compare(password, user.password! || '');
-        if (!isPasswordMatch) return null;
+        // if (!user.password) {
+        //     throw new Error("Password not set for this account");
+        // }
 
-        // const isPasswordMatch = await bcrypt.compare(password, user.password! || '');
+        // const isPasswordMatch = await bcrypt.compare(password, user.password);
         // if (!isPasswordMatch) {
-        //     return response({
-        //         success: false,
-        //         error: {
-        //             code: 401,
-        //             message: "Invalid credentials.",
-        //         },
-        //     });
+        //     throw new Error("Invalid password");
         // }
 
         return {
@@ -38,10 +34,14 @@ export const CredentialsProvider = Credentials({
             name: user.name,
             email: user.email,
             image: user.image || null,
+            number: user.phoneNumber || null,
+            dateOfBirth: user.dateOfBirth || null,
+            emailVerified: user.emailVerified || null,
             isOAuth: false,
-        }
-    }
-})
+        };
+    },
+});
+
 export const GithubProvider = Github({
     clientId: process.env.GITHUB_ID as string,
     clientSecret: process.env.GITHUB_SECRET as string,

@@ -10,13 +10,15 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Login_Schema } from "@/schemas";
-import { login } from "@/actions/login";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"form">) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    const router = useRouter();
 
     const form = useForm<z.infer<typeof Login_Schema>>({
         resolver: zodResolver(Login_Schema),
@@ -31,15 +33,31 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
         setError(null);
         try {
             const response = await signIn("credentials", {
-                ...values,
-                // callbackUrl: "/dashboard"
+                email: values.email,
+                password: values.password,
+                redirect: false,
             });
-            console.log(response)
+
+            console.log("signIn response:", response);
+
+            if (response?.error) {
+                setError(response.error);
+                return;
+            }
+
+            if (response?.ok) {
+                router.push('/dashboard');
+            } else {
+                setError("Login failed. Please try again.");
+            }
         } catch (err) {
             setError("An unexpected error occurred.");
+            console.error("Login error:", err);
         } finally {
             setIsLoading(false);
-            form.reset();
+            if (error) {
+                form.reset();
+            }
         }
     }
 
@@ -50,6 +68,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
             await signIn(provider, { callbackUrl: "/dashboard" });
         } catch (err) {
             setError(`Failed to sign in with ${provider}. Please try again.`);
+            console.error(`OAuth error (${provider}):`, err);
         } finally {
             setIsLoading(false);
         }
@@ -155,7 +174,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 533.5 544.3" className="h-5 w-5">
                             <path
                                 fill="#4285f4"
-                                d="M533.5 278.4c0-17.4-1.6-34.1-4.6-50.4H272v95.3h146.9c-6.4 34.5-25.2 63.6-53.8 83.2v68h86.9c50.8-46.8 81.5-115.8 81.5-196.1z"
+                                d="M533.5 278.4c0-17.4-1.6-34.1-4.6-50.4H272v95.3h146.9c-6.4 34.5-25.2 63.6-53.8 83.2v68h86.9c50.8-46.8 81.5-115.8 ajs81.5-196.1z"
                             />
                             <path
                                 fill="#34a853"
