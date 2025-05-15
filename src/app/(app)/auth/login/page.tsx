@@ -12,7 +12,7 @@ export default function LoginPage() {
           <div className="mb-8">
             <Link href="/auth/register" className="inline-flex items-center text-white hover:text-white/80 transition-colors">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Register Page
+              Back to Signup
             </Link>
           </div>
 
@@ -42,10 +42,11 @@ export default function LoginPage() {
                   className="h-10 w-10 rounded-full bg-white/20 border-2 border-white flex items-center justify-center overflow-hidden"
                 >
                   <Image
-                    src={""}
+                    src={`/person${i}.jpg`}
                     alt={`User ${i}`}
-                    width={40}
-                    height={40}
+                    width={50}
+                    height={50}
+                    className="object-cover w-full h-full rounded-full"
                   />
                 </div>
               ))}
@@ -88,7 +89,13 @@ export default function LoginPage() {
                     key={i}
                     className="h-8 w-8 rounded-full bg-purple-100 border border-purple-200 flex items-center justify-center text-xs text-purple-700"
                   >
-                    {i}
+                    <Image
+                      src={`/person${i}.jpg`}
+                      alt={`User ${i}`}
+                      width={50}
+                      height={50}
+                      className="object-cover w-full h-full rounded-full"
+                    />
                   </div>
                 ))}
               </div>

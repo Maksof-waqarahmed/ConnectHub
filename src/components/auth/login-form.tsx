@@ -1,24 +1,29 @@
-"use client";
-import type React from "react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import Link from "next/link";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Login_Schema } from "@/schemas";
-import { signIn } from "next-auth/react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+"use client"
+import type React from "react"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import Link from "next/link"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { signIn } from "next-auth/react"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+
+// Define the login schema directly in the component
+const Login_Schema = z.object({
+    email: z.string().email({ message: "Please enter a valid email address" }),
+    password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+})
 
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"form">) {
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
-    const router = useRouter();
+    const router = useRouter()
 
     const form = useForm<z.infer<typeof Login_Schema>>({
         resolver: zodResolver(Login_Schema),
@@ -26,67 +31,67 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
             email: "",
             password: "",
         },
-    });
+    })
 
     async function onSubmit(values: z.infer<typeof Login_Schema>) {
-        setIsLoading(true);
-        setError(null);
+        setIsLoading(true)
+        setError(null)
         try {
             const response = await signIn("credentials", {
                 email: values.email,
                 password: values.password,
                 redirect: false,
-            });
+            })
 
-            console.log("signIn response:", response);
+            console.log("signIn response:", response)
 
             if (response?.error) {
-                setError(response.error);
-                return;
+                setError(response.error)
+                return
             }
 
             if (response?.ok) {
-                router.push('/dashboard');
+                router.push("/dashboard")
             } else {
-                setError("Login failed. Please try again.");
+                setError("Login failed. Please try again.")
             }
         } catch (err) {
-            setError("An unexpected error occurred.");
-            console.error("Login error:", err);
+            setError("An unexpected error occurred.")
+            console.error("Login error:", err)
         } finally {
-            setIsLoading(false);
+            setIsLoading(false)
             if (error) {
-                form.reset();
+                form.reset()
             }
         }
     }
 
     async function handleOAuth(provider: string): Promise<void> {
-        setIsLoading(true);
-        setError(null);
+        setIsLoading(true)
+        setError(null)
         try {
-            await signIn(provider, { callbackUrl: "/dashboard" });
+            await signIn(provider, { callbackUrl: "/dashboard" })
         } catch (err) {
-            setError(`Failed to sign in with ${provider}. Please try again.`);
-            console.error(`OAuth error (${provider}):`, err);
+            setError(`Failed to sign in with ${provider}. Please try again.`)
+            console.error(`OAuth error (${provider}):`, err)
         } finally {
-            setIsLoading(false);
+            setIsLoading(false)
         }
     }
 
     return (
-        <div className={cn("flex flex-col gap-6", className)}>
-            <div className="flex flex-col gap-2">
-                <h1 className="text-2xl font-bold">Login to your account</h1>
-                <p className="text-balance text-sm text-muted-foreground">
-                    Enter your email below to login to your account
-                </p>
-            </div>
-            {error && (
-                <div className="text-red-500 text-sm text-center">
-                    {error}
+        <div className={cn("flex flex-col gap-6 relative", className)}>
+            {isLoading && (
+                <div className="absolute inset-0 flex items-center justify-center z-50">
+                    <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
                 </div>
             )}
+
+            <div className="flex flex-col gap-2">
+                <h1 className="text-2xl font-bold">Login to your account</h1>
+                <p className="text-balance text-sm text-muted-foreground">Enter your email below to login to your account</p>
+            </div>
+            {error && <div className="text-red-500 text-sm text-center">{error}</div>}
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                     <div className="grid gap-6">
@@ -140,7 +145,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                         </div>
 
                         <Button type="submit" className="w-full" disabled={isLoading}>
-                            {isLoading ? "Logging in..." : "Login"}
+                            Login
                         </Button>
                     </div>
                 </form>
@@ -163,7 +168,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                                 fill="currentColor"
                             />
                         </svg>
-                        {isLoading ? "Loading..." : "GitHub"}
+                        GitHub
                     </Button>
                     <Button
                         variant="outline"
@@ -174,7 +179,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 533.5 544.3" className="h-5 w-5">
                             <path
                                 fill="#4285f4"
-                                d="M533.5 278.4c0-17.4-1.6-34.1-4.6-50.4H272v95.3h146.9c-6.4 34.5-25.2 63.6-53.8 83.2v68h86.9c50.8-46.8 81.5-115.8 ajs81.5-196.1z"
+                                d="M533.5 278.4c0-17.4-1.6-34.1-4.6-50.4H272v95.3h146.9c-6.4 34.5-25.2 63.6-53.8 83.2v68h86.9c50.8-46.8 81.5-115.8 81.5-196.1z"
                             />
                             <path
                                 fill="#34a853"
@@ -189,10 +194,10 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                                 d="M272 107.7c39.5 0 75 13.6 103 40.4l77.1-77.1C405.6 24.2 344.6 0 272 0 168.2 0 76.3 62.2 32.7 163.6l88.9 69.4C142.8 154.9 202 107.7 272 107.7z"
                             />
                         </svg>
-                        {isLoading ? "Loading..." : "Google"}
+                        Google
                     </Button>
                 </div>
             </div>
         </div>
-    );
+    )
 }

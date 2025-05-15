@@ -7,7 +7,6 @@ import { getAccountByUserId } from "@/services/account";
 
 export const {
     handlers: { GET, POST },
-    auth,
     signIn,
     signOut,
 } = NextAuth({

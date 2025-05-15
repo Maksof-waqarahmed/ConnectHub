@@ -20,6 +20,8 @@ export const CredentialsProvider = Credentials({
             throw new Error("User not found");
         }
 
+        console.log("user", user)
+
         // if (!user.password) {
         //     throw new Error("Password not set for this account");
         // }
@@ -43,8 +45,8 @@ export const CredentialsProvider = Credentials({
 });
 
 export const GithubProvider = Github({
-    clientId: process.env.GITHUB_ID as string,
-    clientSecret: process.env.GITHUB_SECRET as string,
+    clientId: process.env.GITHUB_CLIENT_ID as string,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
 });
 
 export const GoogleProvider = Google({

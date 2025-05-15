@@ -25,10 +25,10 @@ export default function RegisterPage() {
 
           <div className="hidden lg:block relative h-80 w-full">
             <Image
-              src="/placeholder.svg?height=400&width=400"
+              src="/illustration-login.png"
               alt="ConnectHub Illustration"
               fill
-              className="object-contain"
+              className="object-contain rounded-tr-full rounded-bl-full"
               priority
             />
           </div>
@@ -41,7 +41,13 @@ export default function RegisterPage() {
                     key={i}
                     className="h-10 w-10 rounded-full bg-white/20 border-2 border-white flex items-center justify-center text-xs"
                   >
-                    {i}
+                    <Image
+                      src={`/person${i}.jpg`}
+                      alt={`User ${i}`}
+                      width={50}
+                      height={50}
+                      className="object-cover w-full h-full rounded-full"
+                    />
                   </div>
                 ))}
               </div>
@@ -69,7 +75,13 @@ export default function RegisterPage() {
                     key={i}
                     className="h-8 w-8 rounded-full bg-purple-100 border border-purple-200 flex items-center justify-center text-xs text-purple-700"
                   >
-                    {i}
+                    <Image
+                      src={`/person${i}.jpg`}
+                      alt={`User ${i}`}
+                      width={50}
+                      height={50}
+                      className="object-cover w-full h-full rounded-full"
+                    />
                   </div>
                 ))}
               </div>
