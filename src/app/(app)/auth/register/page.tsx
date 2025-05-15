@@ -3,7 +3,7 @@ import { ArrowLeft } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 
-export default function RegisterPage() {
+export default async function RegisterPage() {
   return (
     <div className="flex flex-col lg:flex-row min-h-svh w-full bg-gradient-to-br from-[#8E51FF] to-[#6930c3] p-2 md:p-0">
       {/* Left side - Illustration/Branding */}
