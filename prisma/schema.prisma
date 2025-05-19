@@ -20,7 +20,6 @@ model User {
   emailToken            String?                @map("email_token")
   createdAt             DateTime               @default(now()) @map(name: "created_at")
   updatedAt             DateTime               @updatedAt() @map(name: "updated_at")
-  isTwoFactorEnabled    Boolean                @default(false)
   accounts              Account[]
   Session               Session[]
 }
