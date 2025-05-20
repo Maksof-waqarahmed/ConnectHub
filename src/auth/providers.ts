@@ -1,49 +1,61 @@
-import { Login_Schema } from "@/schemas";
+import { Login_Schema, Register_Schema } from "@/schemas";
 import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import Credentials from "next-auth/providers/credentials";
-import { getUserByEmail } from "@/services/user";
+import { createUserByEmail, getUserByEmail } from "@/services/user";
 
 export const CredentialsProvider = Credentials({
     async authorize(credentials) {
-        const validFields = await Login_Schema.safeParseAsync(credentials);
+        const validLogin = await Login_Schema.safeParseAsync(credentials);
 
-        if (!validFields.success) {
+        if (!validLogin.success) {
             throw new Error("Invalid input data");
         }
 
-        const { email, password } = validFields.data;
+        const { email, password } = validLogin.data;
+        let user = await getUserByEmail(email);
 
-        const user = await getUserByEmail(email);
         if (!user) {
-            throw new Error("User not found");
+
+            const { password, ...restData } = credentials as any;
+
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            const newUser = await createUserByEmail({
+                data: {
+                    ...restData,
+                    password: hashedPassword,
+                },
+            });
+
+            console.log("New User", newUser)
+
+            user = newUser;
         }
 
-        console.log("user", user)
+        if (!user!.password || typeof user!.password !== 'string') {
+            throw new Error("User has no valid password");
+        }
 
-        // if (!user.password) {
-        //     throw new Error("Password not set for this account");
-        // }
+        const isPasswordMatch = await bcrypt.compare(password, user!.password);
 
-        // const isPasswordMatch = await bcrypt.compare(password, user.password);
-        // if (!isPasswordMatch) {
-        //     throw new Error("Invalid password");
-        // }
+        if (!isPasswordMatch) {
+            throw new Error("Invalid password");
+        }
 
         return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            image: user.image || null,
-            number: user.phoneNumber || null,
-            dateOfBirth: user.dateOfBirth || null,
-            emailVerified: user.emailVerified || null,
+            id: user!.id,
+            name: user!.name,
+            email: user!.email,
+            image: user!.image || null,
+            number: user!.phoneNumber || null,
+            dateOfBirth: user!.dateOfBirth || null,
+            emailVerified: user!.emailVerified || null,
             isOAuth: false,
         };
     },
 });
-
 export const GithubProvider = Github({
     clientId: process.env.GITHUB_CLIENT_ID as string,
     clientSecret: process.env.GITHUB_CLIENT_SECRET as string,

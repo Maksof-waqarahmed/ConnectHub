@@ -59,7 +59,7 @@ export default async function RegisterPage() {
 
       {/* Right side - Form */}
       <div className="lg:w-1/2 bg-white rounded-t-3xl lg:rounded-none p-6 lg:p-0 flex items-center justify-center">
-        <div className="w-full max-w-md p-4 lg:p-12">
+        <div className="w-full max-w-xl p-4 lg:p-12">
           <div className="lg:hidden mb-6 text-center">
             <h2 className="text-xl font-semibold text-gray-900">Create your account</h2>
             <p className="text-sm text-gray-500">Fill in your details to get started</p>

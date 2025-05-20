@@ -12,12 +12,7 @@ import { useForm } from "react-hook-form"
 import { signIn } from "next-auth/react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-
-// Define the login schema directly in the component
-const Login_Schema = z.object({
-    email: z.string().email({ message: "Please enter a valid email address" }),
-    password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-})
+import { Login_Schema } from "@/schemas"
 
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"form">) {
     const [isLoading, setIsLoading] = useState(false)
@@ -89,7 +84,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 
             <div className="flex flex-col gap-2">
                 <h1 className="text-2xl font-bold">Login to your account</h1>
-                <p className="text-balance text-sm text-muted-foreground">Enter your email below to login to your account</p>
+                <p className="text-balance text-sm text-muted-foreground">Enter your email and password below to login to your account</p>
             </div>
             {error && <div className="text-red-500 text-sm text-center">{error}</div>}
             <Form {...form}>
