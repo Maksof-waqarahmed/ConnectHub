@@ -190,13 +190,12 @@ export function RegisterForm({ className, ...props }: React.ComponentPropsWithou
               />
             </div>
 
-            <div className="md:col-span-2">
-              <div className="flex justify-center w-full">
-                <Button type="submit" className="w-full md:w-[70%]">
-                  Create Account
-                </Button>
-              </div>
+            <div className="md:col-span-2 w-full">
+              <Button type="submit" className="w-full">
+                Create Account
+              </Button>
             </div>
+            
           </div>
         </form>
       </Form>
